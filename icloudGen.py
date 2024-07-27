@@ -38,9 +38,14 @@ def nameSurname(mail):
     parts = re.split('[-._]', mail)
     
     sorted_words = sorted(parts, key=len, reverse=True)
-    
-    name = sorted_words[0]
-    lastname = sorted_words[1]
+    try:
+        name = sorted_words[0]
+        lastname = sorted_words[1]
+    except:
+        name = sorted_words[0]
+        lastname = "None"
+        
+
     
     name = remove_digits(name)
     lastname = remove_digits(lastname)

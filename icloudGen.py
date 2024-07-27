@@ -61,10 +61,7 @@ def actualtime():
 def toCSV(name, lastname, mail):
     file = "accounts.csv"
     if not os.path.isfile(file):
-    # Utworzenie nowego DataFrame z nagłówkami
         df = pd.DataFrame(columns=['NAME', 'LASTNAME', 'EMAIL'])
-        
-        # Zapisanie DataFrame do pliku CSV
         df.to_csv(file, index=False)
     
     df = pd.DataFrame
@@ -79,7 +76,7 @@ def toCSV(name, lastname, mail):
 
 def login():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=False)
+        browser = playwright.chromium.launch(headless=True)
         context = browser.new_context()
         page = context.new_page()
         
@@ -166,3 +163,8 @@ def main():
         time.sleep(720)
         
 main()
+
+
+
+#all divs:
+# divs = page.query_selector_all("div.Typography.searchable-card-subtitle.Typography-body2")

@@ -76,7 +76,7 @@ def toCSV(name, lastname, mail):
 
 def login():
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=True)
+        browser = playwright.chromium.launch(headless=False)
         context = browser.new_context()
         page = context.new_page()
         
@@ -88,7 +88,7 @@ def login():
 
         a = input("")
         context.storage_state(path="session.json")
-        print("[" + actualtime() +  "]" , " [ICloud]", "Generating...")
+        print("[" + actualtime() +  "]" , "[ICloud]", "Session Created")
         browser.close()
         
         
@@ -104,7 +104,7 @@ def errorHandling(page):
     
 def openloggedin():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         context = browser.new_context(storage_state="session.json")
         page = context.new_page() 
         # page.goto("https://www.icloud.com/")
@@ -157,7 +157,9 @@ def openloggedin():
         
         
 def main():
+
     # login()
+    # time.sleep(5)
     while True:
         openloggedin()
         time.sleep(720)

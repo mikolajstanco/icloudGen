@@ -90,16 +90,6 @@ def login():
         context.storage_state(path="session.json")
         print("[" + actualtime() +  "]" , "[ICloud]", "Session Created")
         browser.close()
-        
-        
-def errorHandling(page):
-    page
-    result = page.evaluate("""document.querySelector("#form-textbox-1722015576438-0_error")""")
-    print(result)
-    if result is None:
-        return False
-    else:
-        return True
   
     
 def openloggedin():
@@ -151,6 +141,24 @@ def openloggedin():
         print("[" + actualtime() +  "]" , "[ICloud]", f"[{mail}]", "Sleeping for 12 minutes")
         browser.close()
         
+def collectAllGeneratedMails():   
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)
+        context = browser.new_context(storage_state="session.json")
+        page = context.new_page() 
+        page.goto("https://www.icloud.com/icloudplus/")
+        time.sleep(3)
+        page.locator("xpath=//*[@id='root']/ui-main-pane/div/div[2]/div/div/main/div/div[3]/div/div[1]/article/div/button").click()
+        time.sleep(3)
+        
+        frame = page.frame_locator("iframe[data-name='hidemyemail']")
+        divs = frame.locator('xpath=//span[@class="Typography searchable-card-subtitle Typography-body2"]').element_handles()
+        
+        for div in divs:
+            print(div.text_content())
+
+        browser.close()    
+   
         
         
 def main():
@@ -163,6 +171,8 @@ def main():
         
 main()
 
+
+# collectAllGeneratedMails()
 
 
 #all divs:

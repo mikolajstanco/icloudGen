@@ -104,7 +104,7 @@ def errorHandling(page):
     
 def openloggedin():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         context = browser.new_context(storage_state="session.json")
         page = context.new_page() 
         # page.goto("https://www.icloud.com/")
@@ -126,28 +126,25 @@ def openloggedin():
         frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click()
         time.sleep(4)
         #error
-        try:
-            error = frame.locator('xpath=//div[@class="form-message-wrapper"]').text_content()
-            if len(error) > 1:
-                errno = True
-            else:
-                errno = False
-        except:
-            errno = False   
+        locator = frame.locator('xpath=//div[@class="form-message-wrapper"]')
+
+        if locator.count() > 0:
+            errno = len(locator.text_content()) > 1
+        else:
+            errno = False
         
         while errno == True:
             print("[" + actualtime() +  "]" , "[ICloud]", f"[{mail}]", "Max accounts Generation reached, waiting additional time")
             time.sleep(720) 
             frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click() 
             time.sleep(4)
-            try:
-                error = frame.locator('xpath=//div[@class="form-message-wrapper"]').text_content()
-                if len(error) > 1:
-                    errno = True
-                else:
-                    errno = False
-            except:
-                errno = False 
+            locator = frame.locator('xpath=//div[@class="form-message-wrapper"]')
+
+            if locator.count() > 0:
+                errno = len(locator.text_content()) > 1
+            else:
+                errno = False
+
         time.sleep(2) 
         nameSurname(mail)
         print("[" + actualtime() +  "]" , "[ICloud]", f"[{mail}]", "Task Finished")

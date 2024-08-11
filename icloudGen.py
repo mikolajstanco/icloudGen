@@ -94,7 +94,7 @@ def login():
     
 def openloggedin():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         context = browser.new_context(storage_state="session.json")
         page = context.new_page() 
         # page.goto("https://www.icloud.com/")
@@ -109,7 +109,7 @@ def openloggedin():
         
         counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2").text_content().split()
         
-        time.sleep(30000)
+        time.sleep(1)
         frame.get_by_role("button", name="Dodaj").click()
         time.sleep(3)
         mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]/div").text_content()

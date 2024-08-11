@@ -94,7 +94,7 @@ def login():
     
 def openloggedin():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         context = browser.new_context(storage_state="session.json")
         page = context.new_page() 
         # page.goto("https://www.icloud.com/")
@@ -105,14 +105,19 @@ def openloggedin():
         time.sleep(3)
         
         frame = page.frame_locator("iframe[data-name='hidemyemail']")
+        
+        
+        counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2").text_content().split()
+        
+        time.sleep(30000)
         frame.get_by_role("button", name="Dodaj").click()
         time.sleep(3)
         mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]/div").text_content()
-        print("[" + actualtime() +  "]" , "[ICloud]", f"[{mail}]", "Generated E-Email")
+        print("[" + actualtime() +  "]" , "[ICloud]" ,f"[{int(counter[3]) + 1}]", f"[{mail}]", "Generated E-Email")
         
         text_inputs = frame.locator('//input[@type="text"]').element_handles()
         text_inputs[0].fill("Meowek")
-        print("[" + actualtime() +  "]" , "[ICloud]", f"[{mail}]", "Data Filled")
+        print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Data Filled")
         frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click()
         time.sleep(4)
         #error
@@ -124,7 +129,7 @@ def openloggedin():
             errno = False
         
         while errno == True:
-            print("[" + actualtime() +  "]" , "[ICloud]", f"[{mail}]", "Max accounts Generation reached, waiting additional time")
+            print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Max accounts Generation reached, waiting additional time")
             time.sleep(720) 
             frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click() 
             time.sleep(4)
@@ -137,8 +142,8 @@ def openloggedin():
 
         time.sleep(2) 
         nameSurname(mail)
-        print("[" + actualtime() +  "]" , "[ICloud]", f"[{mail}]", "Task Finished")
-        print("[" + actualtime() +  "]" , "[ICloud]", f"[{mail}]", "Sleeping for 12 minutes")
+        print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Task Finished")
+        print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Sleeping for 12 minutes")
         browser.close()
         
 def collectAllGeneratedMails():   

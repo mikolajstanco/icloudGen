@@ -45,8 +45,6 @@ def nameSurname(mail):
         name = sorted_words[0]
         lastname = "None"
         
-
-    
     name = remove_digits(name)
     lastname = remove_digits(lastname)
     
@@ -91,7 +89,6 @@ def login():
         print("[" + actualtime() +  "]" , "[ICloud]", "Session Created")
         browser.close()
   
-    
 def openloggedin():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -102,31 +99,45 @@ def openloggedin():
         
         #otwiera Hide My Mail frame
         page.locator("xpath=//*[@id='root']/ui-main-pane/div/div[2]/div/div/main/div/div[3]/div/div[1]/article/div/button").click()
-        time.sleep(3)
+        time.sleep(1.5)
         
         #lokalizuje Hide My Mail frame
         frame = page.frame_locator("iframe[data-name='hidemyemail']")
         
-        #counter ilości zrobionych maili
-        counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2").text_content().split() 
+        #counter ilości zrobionych maili - jeżeli nie znajduje oznacza że żadne mail nie został jeszcze wykonany 
+        counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2")
         
-        #lokalizuje i klika plus/dodaj noweg maila
-        frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/div/div[2]/button").click()
-    
-        time.sleep(1)
+        if counter.count() > 0:
+            #znalazł ilość zrobionych maili - łuskanie wymaganej wartości - przerabanie na int
+            counter = int(counter.text_content().split()[3])
+
+            #lokalizuje i klika plus/dodaj noweg maila
+            frame.get_by_role("button", name="Dodaj").click()
+            time.sleep(1)
+            
+        else:
+            #żaden mail nie został jeszcze wykonany więc wartość counter to 0,
+            counter = 0
+            
+            #lokalizuje i klika dodaj noweg maila
+            frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section/div/div/div/div[1]/div/div[1]/h3").click()
+            time.sleep(1)
         
+             
         #lokalizuje i zapisuje do zmiennej *mail wygenerowany adres email
         mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
         
         #oznaczenie wykonania zdarzenia - generated Email
-        print("[" + actualtime() +  "]" , "[ICloud]" ,f"[{int(counter[3]) + 1}]", f"[{mail}]", "Generated Email")
+        print("[" + actualtime() +  "]" , "[ICloud]" ,f"[{counter + 1}]", f"[{mail}]", "Generated Email")
+        time.sleep(1.5)
         
-        #lokalizuje i wypełnia "oznacznie" maila - pole wymagane - 
+        #lokalizuje i wypełnia "oznacznie" maila - pole wymagane
         text_inputs = frame.locator('//input[@type="text"]').element_handles()
         text_inputs[0].fill("Meowek")
         
         #oznaczenie wykonania zdarzenia - data filled
-        print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Data Filled")
+        print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Data Filled")
+        time.sleep(1.5)
         
         #lokalizuje i klika przycisk "Utwórz adres email"
         frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click()
@@ -142,7 +153,7 @@ def openloggedin():
             errno = False
         
         while errno == True:
-            print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Max accounts Generation reached, waiting additional time")
+            print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Max accounts Generation reached, waiting additional time")
             time.sleep(720) 
             frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click() 
             time.sleep(4)
@@ -155,8 +166,8 @@ def openloggedin():
 
         time.sleep(2) 
         nameSurname(mail)
-        print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Task Finished")
-        print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Sleeping for 12 minutes")
+        print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Task Finished")
+        print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Sleeping for 12 minutes")
         browser.close()
         
 def collectAllGeneratedMails():   
@@ -183,6 +194,6 @@ def main():
     # time.sleep(5)
     while True:
         openloggedin()
-        time.sleep(10)
+        time.sleep(720)
         
 main()

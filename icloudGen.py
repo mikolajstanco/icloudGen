@@ -94,33 +94,46 @@ def login():
     
 def openloggedin():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         context = browser.new_context(storage_state="session.json")
         page = context.new_page() 
-        # page.goto("https://www.icloud.com/")
-        # time.sleep(2)
         page.goto("https://www.icloud.com/icloudplus/")
         time.sleep(3)
+        
+        #otwiera Hide My Mail frame
         page.locator("xpath=//*[@id='root']/ui-main-pane/div/div[2]/div/div/main/div/div[3]/div/div[1]/article/div/button").click()
         time.sleep(3)
         
+        #lokalizuje Hide My Mail frame
         frame = page.frame_locator("iframe[data-name='hidemyemail']")
         
+        #counter ilości zrobionych maili
+        counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2").text_content().split() 
         
-        counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2").text_content().split()
-        
+        #lokalizuje i klika plus/dodaj noweg maila
+        frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/div/div[2]/button").click()
+    
         time.sleep(1)
-        frame.get_by_role("button", name="Dodaj").click()
-        time.sleep(3)
-        mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]/div").text_content()
-        print("[" + actualtime() +  "]" , "[ICloud]" ,f"[{int(counter[3]) + 1}]", f"[{mail}]", "Generated E-Email")
         
+        #lokalizuje i zapisuje do zmiennej *mail wygenerowany adres email
+        mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
+        
+        #oznaczenie wykonania zdarzenia - generated Email
+        print("[" + actualtime() +  "]" , "[ICloud]" ,f"[{int(counter[3]) + 1}]", f"[{mail}]", "Generated Email")
+        
+        #lokalizuje i wypełnia "oznacznie" maila - pole wymagane - 
         text_inputs = frame.locator('//input[@type="text"]').element_handles()
         text_inputs[0].fill("Meowek")
+        
+        #oznaczenie wykonania zdarzenia - data filled
         print("[" + actualtime() +  "]" , "[ICloud]",f"[{int(counter[3]) + 1}]", f"[{mail}]", "Data Filled")
+        
+        #lokalizuje i klika przycisk "Utwórz adres email"
         frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click()
-        time.sleep(4)
-        #error
+
+        time.sleep(3)
+    
+        #error grabber
         locator = frame.locator('xpath=//div[@class="form-message-wrapper"]')
 
         if locator.count() > 0:
@@ -164,21 +177,12 @@ def collectAllGeneratedMails():
 
         browser.close()    
    
-        
-        
 def main():
 
     # login()
     # time.sleep(5)
     while True:
         openloggedin()
-        time.sleep(720)
+        time.sleep(10)
         
 main()
-
-
-# collectAllGeneratedMails()
-
-
-#all divs:
-# divs = page.query_selector_all("div.Typography.searchable-card-subtitle.Typography-body2")

@@ -103,19 +103,18 @@ def openloggedin():
         
         #lokalizuje Hide My Mail frame
         frame = page.frame_locator("iframe[data-name='hidemyemail']")
-        
         #counter ilości zrobionych maili - jeżeli nie znajduje oznacza że żadne mail nie został jeszcze wykonany 
         counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2")
         
         if counter.count() > 0:
             #znalazł ilość zrobionych maili - łuskanie wymaganej wartości - przerabanie na int
             counter = int(counter.text_content().split()[3])
-
+          
             #lokalizuje i klika plus/dodaj noweg maila
             frame.get_by_role("button", name="Dodaj").click()
             time.sleep(1)
             
-        else:
+        else:   
             #żaden mail nie został jeszcze wykonany więc wartość counter to 0,
             counter = 0
             
@@ -123,9 +122,14 @@ def openloggedin():
             frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section/div/div/div/div[1]/div/div[1]/h3").click()
             time.sleep(1)
         
-             
+        #TODO - if "WczytywanieGeneruję" in mail: wait another 5 seconds
         #lokalizuje i zapisuje do zmiennej *mail wygenerowany adres email
         mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
+        
+        if "WczytywanieGeneruję" in mail:
+            time.sleep(10)
+            mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
+        
         
         #oznaczenie wykonania zdarzenia - generated Email
         print("[" + actualtime() +  "]" , "[ICloud]" ,f"[{counter + 1}]", f"[{mail}]", "Generated Email")
@@ -188,12 +192,19 @@ def collectAllGeneratedMails():
 
         browser.close()    
    
-def main():
 
+   
+  
+def main():
+    #TODO deleteAllMails()
+    #TODO openAccount()
+    #TODO login()
+    #TODO collectAllGeneratedMails()
     # login()
-    # time.sleep(5)
+    # # time.sleep(5)
     while True:
         openloggedin()
         time.sleep(720)
+    # deleteAllMails()
         
 main()

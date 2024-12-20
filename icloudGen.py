@@ -99,7 +99,7 @@ def openloggedin():
         
         #otwiera Hide My Mail frame
         page.locator("xpath=//*[@id='root']/ui-main-pane/div/div[2]/div/div/main/div/div[3]/div/div[1]/article/div/button").click()
-        time.sleep(1.5)
+        time.sleep(3)
         
         #lokalizuje Hide My Mail frame
         frame = page.frame_locator("iframe[data-name='hidemyemail']")

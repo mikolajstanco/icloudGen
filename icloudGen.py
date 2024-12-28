@@ -59,11 +59,6 @@ def actualtime():
     return current_time
 
 def toCSV(name, lastname, mail, file):
-    # if mode == "generating":
-    #     file = "accounts.csv"
-    # elif mode == "allgeneratedmails":
-    #     file = "iCloudAllGeneratedMails.csv"
-    
     if not os.path.isfile(file):
         df = pd.DataFrame(columns=['NAME', 'LASTNAME', 'EMAIL'])
         df.to_csv(file, index=False)

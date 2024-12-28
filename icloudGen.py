@@ -131,9 +131,9 @@ def openAccount():
         browser.close()    
         
 def generating():
+    counter = 0
     print("[" + actualtime() +  "]" , "[ICloud] Generation started")
     while (counter + 1 <750):
-        print(counter)
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             try:

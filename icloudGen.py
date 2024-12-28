@@ -30,7 +30,6 @@ def webhook_execute(email):
 
     response = webhook.execute(remove_embeds=True)
 
-
 def remove_digits(text):
     return re.sub(r'\d+', '', text)
 
@@ -77,7 +76,6 @@ def toCSV(name, lastname, mail, file):
     
     df.to_csv(file, index=False,header=False, mode='a')
     
-
 def login():
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=False)
@@ -94,97 +92,7 @@ def login():
         context.storage_state(path="session.json")
         print("[" + actualtime() +  "]" , "[ICloud]", "Session Created")
         browser.close()
-  
-def openloggedin():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        try:
-            context = browser.new_context(storage_state="session.json", locale="us-US")
-            page = context.new_page() 
-        except:
-            print("[" + actualtime() +  "]" , "[ICloud] Session Error - Generation Aborted - [ENTER] to continue")
-            input()
-            sys.exit(1)
-
-        page.goto("https://www.icloud.com/icloudplus/")
-        time.sleep(3)
-        
-        #otwiera Hide My Mail frame
-        page.locator("xpath=//*[@id='root']/ui-main-pane/div/div[2]/div/div/main/div/div[3]/div/div[1]/article/div/button").click()
-        time.sleep(3)
-        
-        #lokalizuje Hide My Mail frame
-        frame = page.frame_locator("iframe[data-name='hidemyemail']")
-        #counter ilości zrobionych maili - jeżeli nie znajduje oznacza że żadne mail nie został jeszcze wykonany 
-        counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2")
-        if counter.count() > 0:
-            #znalazł ilość zrobionych maili - łuskanie wymaganej wartości - przerabanie na int
-            counter = int(counter.text_content().split()[0])
-            #lokalizuje i klika plus/dodaj noweg maila
-            frame.get_by_role("button", name="Add").click()
-            time.sleep(1)
-            
-        else:   
-            #żaden mail nie został jeszcze wykonany więc wartość counter to 0,
-            counter = 0
-            
-            #lokalizuje i klika dodaj noweg maila
-            frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section/div/div/div/div[1]/div/div[1]/h3").click()
-            time.sleep(1)
-        
-        #lokalizuje i zapisuje do zmiennej *mail wygenerowany adres email
-        mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
-        
-
-        #TODO - Zmiana na US odpowiednik
-        if "WczytywanieGeneruję" in mail:
-            time.sleep(10)
-            mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
-        
-        
-        #oznaczenie wykonania zdarzenia - generated Email
-        print("[" + actualtime() +  "]" , "[ICloud]" ,f"[{counter + 1}]", f"[{mail}]", "Generated Email")
-        time.sleep(1.5)
-        
-        #lokalizuje i wypełnia "oznacznie" maila - pole wymagane
-        text_inputs = frame.locator('//input[@type="text"]').element_handles()
-        text_inputs[0].fill("Meowek")
-        
-        #oznaczenie wykonania zdarzenia - data filled
-        print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Data Filled")
-        time.sleep(1.5)
-        
-        #lokalizuje i klika przycisk "Utwórz adres email"
-        frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click()
-
-        time.sleep(3)
-    
-        #error grabber
-        locator = frame.locator('xpath=//div[@class="form-message-wrapper"]')
-
-        if locator.count() > 0:
-            errno = len(locator.text_content()) > 1
-        else:
-            errno = False
-        
-        while errno == True:
-            print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Max accounts Generation reached, waiting additional time")
-            time.sleep(720) 
-            frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click() 
-            time.sleep(4)
-            locator = frame.locator('xpath=//div[@class="form-message-wrapper"]')
-
-            if locator.count() > 0:
-                errno = len(locator.text_content()) > 1
-            else:
-                errno = False
-
-        time.sleep(2) 
-        nameSurname(mail, "accounts.csv")
-        print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Task Finished")
-        print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Sleeping for 12 minutes")
-        browser.close()
-        
+     
 def collectAllGeneratedMails():   
     print("[" + actualtime() +  "]" , "[ICloud] Collecting Generated Mails Started")    
     with sync_playwright() as p:
@@ -204,21 +112,109 @@ def collectAllGeneratedMails():
     
         browser.close()    
    
+def generating():
+    counter = 0
+    print("[" + actualtime() +  "]" , "[ICloud] Generation started")
+    while (counter <750):
+        print(counter)
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            try:
+                context = browser.new_context(storage_state="session.json", locale="us-US")
+                page = context.new_page() 
+            except:
+                print("[" + actualtime() +  "]" , "[ICloud] Session Error - Generation Aborted - [ENTER] to continue")
+                input()
+                sys.exit(1)
 
-   
-  
+            page.goto("https://www.icloud.com/icloudplus/")
+            time.sleep(3)
+            
+            #otwiera Hide My Mail frame
+            page.locator("xpath=//*[@id='root']/ui-main-pane/div/div[2]/div/div/main/div/div[3]/div/div[1]/article/div/button").click()
+            time.sleep(3)
+            
+            #lokalizuje Hide My Mail frame
+            frame = page.frame_locator("iframe[data-name='hidemyemail']")
+            #counter ilości zrobionych maili - jeżeli nie znajduje oznacza że żadne mail nie został jeszcze wykonany 
+            counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2")
+            if counter.count() > 0:
+                #znalazł ilość zrobionych maili - łuskanie wymaganej wartości - przerabanie na int
+                counter = int(counter.text_content().split()[0])
+                #lokalizuje i klika plus/dodaj noweg maila
+                frame.get_by_role("button", name="Add").click()
+                time.sleep(1)
+                
+            else:   
+                #żaden mail nie został jeszcze wykonany więc wartość counter to 0,
+                counter = 0
+                
+                #lokalizuje i klika dodaj noweg maila
+                frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section/div/div/div/div[1]/div/div[1]/h3").click()
+                time.sleep(1)
+            
+            #lokalizuje i zapisuje do zmiennej *mail wygenerowany adres email
+            mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
+            
+
+            #TODO - Zmiana na US odpowiednik
+            if "WczytywanieGeneruję" in mail:
+                time.sleep(10)
+                mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
+            
+            
+            #oznaczenie wykonania zdarzenia - generated Email
+            print("[" + actualtime() +  "]" , "[ICloud]" ,f"[{counter + 1}]", f"[{mail}]", "Generated Email")
+            time.sleep(1.5)
+            
+            #lokalizuje i wypełnia "oznacznie" maila - pole wymagane
+            text_inputs = frame.locator('//input[@type="text"]').element_handles()
+            text_inputs[0].fill("Meowek")
+            
+            #oznaczenie wykonania zdarzenia - data filled
+            print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Data Filled")
+            time.sleep(1.5)
+            
+            #lokalizuje i klika przycisk "Utwórz adres email"
+            frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click()
+
+            time.sleep(3)
+        
+            #error grabber
+            locator = frame.locator('xpath=//div[@class="form-message-wrapper"]')
+
+            if locator.count() > 0:
+                errno = len(locator.text_content()) > 1
+            else:
+                errno = False
+            
+            while errno == True:
+                print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Max accounts Generation reached, waiting additional time")
+                time.sleep(720) 
+                frame.locator("xpath=//*[@id='app-modal']/div/div[2]/fieldset/div/div[2]/button").click() 
+                time.sleep(4)
+                locator = frame.locator('xpath=//div[@class="form-message-wrapper"]')
+
+                if locator.count() > 0:
+                    errno = len(locator.text_content()) > 1
+                else:
+                    errno = False
+
+            time.sleep(2) 
+            nameSurname(mail, "accounts.csv")
+            print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Task Finished")
+            print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Sleeping for 12 minutes")
+            browser.close()
+        time.sleep(720)
+
 def main():
     
-    print("[" + actualtime() +  "]" , "[ICloud] Generation started")
     #TODO deleteAllMails()
     #TODO openAccount()
     #TODO login()
-    collectAllGeneratedMails()
+    # collectAllGeneratedMails()
+    generating()
     # login()
-    # # time.sleep(5)
-    # while True:
-    #     openloggedin()
-    #     time.sleep(720)
-    # deleteAllMails()
+
         
 main()

@@ -109,7 +109,8 @@ def collectAllGeneratedMails():
         
         for div in divs:
             nameSurname(div.text_content(), "iCloudAllGeneratedMails.csv")
-    
+
+        print("[" + actualtime() +  "]" , "[ICloud] Collecting Completed - Check CSV")  
         browser.close()    
    
 def openAccount():
@@ -224,13 +225,25 @@ def generating():
         time.sleep(720)
 
 def main():
-    #TODO deleteAllMails()
-    #TODO openAccount()
-    #TODO login()
-    # collectAllGeneratedMails()
-    generating()
-    # openAccount()
-    # login()
 
+    print("[1] - Generate Accounts")
+    print("[2] - Create Session")
+    print("[3] - Collect All Generated Emails")
+    print("[4] - Open Account")
+
+
+    option = int(input("Choose Module: "))
+
+    match option:
+        case 1:
+            generating()
+        case 2:
+            login()
+        case 3:
+            collectAllGeneratedMails()
+        case 4:
+            openAccount()
+
+    #TODO deleteAllMails()
         
 main()

@@ -8,6 +8,7 @@ from time import gmtime, strftime
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from datetime import datetime
 import re
+import sys
 import os
 
 with open("./settings.json", 'r', encoding='utf-8') as plik:
@@ -92,8 +93,14 @@ def login():
 def openloggedin():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context(storage_state="session.json", locale="us-US")
-        page = context.new_page() 
+        try:
+            context = browser.new_context(storage_state="session.json", locale="us-US")
+            page = context.new_page() 
+        except:
+            print("[" + actualtime() +  "]" , "[ICloud] Session Error - Generation Aborted - [ENTER] to continue")
+            input()
+            sys.exit(1)
+
         page.goto("https://www.icloud.com/icloudplus/")
         time.sleep(3)
         
@@ -194,6 +201,7 @@ def collectAllGeneratedMails():
    
   
 def main():
+    
     print("[" + actualtime() +  "]" , "[ICloud] Generation started")
     #TODO deleteAllMails()
     #TODO openAccount()

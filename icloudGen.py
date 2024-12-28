@@ -127,10 +127,11 @@ def openloggedin():
             frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section/div/div/div/div[1]/div/div[1]/h3").click()
             time.sleep(1)
         
-        #TODO - if "WczytywanieGeneruję" in mail: wait another 5 seconds
         #lokalizuje i zapisuje do zmiennej *mail wygenerowany adres email
         mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
         
+
+        #TODO - Zmiana na US odpowiednik
         if "WczytywanieGeneruję" in mail:
             time.sleep(10)
             mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
@@ -181,6 +182,12 @@ def openloggedin():
         
 def collectAllGeneratedMails():   
     with sync_playwright() as p:
+        file = "iCloudAllGeneratedMails.csv"
+        if not os.path.isfile(file):
+            df = pd.DataFrame(columns=['NAME', 'LASTNAME', 'EMAIL'])
+            df.to_csv(file, index=False)
+    
+
         browser = p.chromium.launch(headless=False)
         context = browser.new_context(storage_state="session.json")
         page = context.new_page() 
@@ -206,12 +213,12 @@ def main():
     #TODO deleteAllMails()
     #TODO openAccount()
     #TODO login()
-    #TODO collectAllGeneratedMails()
+    collectAllGeneratedMails()
     # login()
     # # time.sleep(5)
-    while True:
-        openloggedin()
-        time.sleep(720)
+    # while True:
+    #     openloggedin()
+    #     time.sleep(720)
     # deleteAllMails()
         
 main()

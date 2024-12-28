@@ -34,7 +34,7 @@ def webhook_execute(email):
 def remove_digits(text):
     return re.sub(r'\d+', '', text)
 
-def nameSurname(mail):
+def nameSurname(mail, file):
     mail = mail[:-11]
     parts = re.split('[-._]', mail)
     
@@ -49,28 +49,33 @@ def nameSurname(mail):
     name = remove_digits(name)
     lastname = remove_digits(lastname)
     
-    toCSV(name.capitalize(), lastname.capitalize(), mail)
-    webhook_execute(mail)
+    toCSV(name.capitalize(), lastname.capitalize(), mail, file)
+
+    if file == "accounts.csv":
+        webhook_execute(mail)
 
 def actualtime():
     c = datetime.now()    
     current_time = c.strftime('%H:%M:%S')
     return current_time
 
-def toCSV(name, lastname, mail):
-    file = "accounts.csv"
+def toCSV(name, lastname, mail, file):
+    # if mode == "generating":
+    #     file = "accounts.csv"
+    # elif mode == "allgeneratedmails":
+    #     file = "iCloudAllGeneratedMails.csv"
+    
     if not os.path.isfile(file):
         df = pd.DataFrame(columns=['NAME', 'LASTNAME', 'EMAIL'])
         df.to_csv(file, index=False)
     
     df = pd.DataFrame
     
-    
     df = pd.DataFrame({'NAME': [name],
         'SURNAME': [lastname],
         'EMAIL': [mail+"@icloud.com"]})
     
-    df.to_csv('accounts.csv', index=False,header=False, mode='a')
+    df.to_csv(file, index=False,header=False, mode='a')
     
 
 def login():
@@ -175,20 +180,15 @@ def openloggedin():
                 errno = False
 
         time.sleep(2) 
-        nameSurname(mail)
+        nameSurname(mail, "accounts.csv")
         print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Task Finished")
         print("[" + actualtime() +  "]" , "[ICloud]",f"[{counter + 1}]", f"[{mail}]", "Sleeping for 12 minutes")
         browser.close()
         
 def collectAllGeneratedMails():   
+    print("[" + actualtime() +  "]" , "[ICloud] Collecting Generated Mails Started")    
     with sync_playwright() as p:
-        file = "iCloudAllGeneratedMails.csv"
-        if not os.path.isfile(file):
-            df = pd.DataFrame(columns=['NAME', 'LASTNAME', 'EMAIL'])
-            df.to_csv(file, index=False)
-    
-
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         context = browser.new_context(storage_state="session.json")
         page = context.new_page() 
         page.goto("https://www.icloud.com/icloudplus/")
@@ -200,8 +200,8 @@ def collectAllGeneratedMails():
         divs = frame.locator('xpath=//span[@class="Typography searchable-card-subtitle Typography-body2"]').element_handles()
         
         for div in divs:
-            print(div.text_content())
-
+            nameSurname(div.text_content(), "iCloudAllGeneratedMails.csv")
+    
         browser.close()    
    
 

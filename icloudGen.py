@@ -112,10 +112,26 @@ def collectAllGeneratedMails():
     
         browser.close()    
    
+def openAccount():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)
+
+        try:
+            context = browser.new_context(storage_state="session.json", locale="us-US")
+            page = context.new_page() 
+        except:
+            print("[" + actualtime() +  "]" , "[ICloud] Session Error -[ENTER] to continue")
+            input()
+            sys.exit(1)
+        print("[" + actualtime() +  "]" , "[ICloud] Account Opened") 
+
+        page.goto("https://www.icloud.com/icloudplus/")        
+        input("[" + actualtime() +  "] [ENTER] to close")
+        browser.close()    
+        
 def generating():
-    counter = 0
     print("[" + actualtime() +  "]" , "[ICloud] Generation started")
-    while (counter <750):
+    while (counter + 1 <750):
         print(counter)
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -208,12 +224,12 @@ def generating():
         time.sleep(720)
 
 def main():
-    
     #TODO deleteAllMails()
     #TODO openAccount()
     #TODO login()
     # collectAllGeneratedMails()
     generating()
+    # openAccount()
     # login()
 
         

@@ -91,8 +91,8 @@ def login():
   
 def openloggedin():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
-        context = browser.new_context(storage_state="session.json")
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(storage_state="session.json", locale="us-US")
         page = context.new_page() 
         page.goto("https://www.icloud.com/icloudplus/")
         time.sleep(3)
@@ -105,13 +105,11 @@ def openloggedin():
         frame = page.frame_locator("iframe[data-name='hidemyemail']")
         #counter ilości zrobionych maili - jeżeli nie znajduje oznacza że żadne mail nie został jeszcze wykonany 
         counter = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2")
-        
         if counter.count() > 0:
             #znalazł ilość zrobionych maili - łuskanie wymaganej wartości - przerabanie na int
-            counter = int(counter.text_content().split()[3])
-          
+            counter = int(counter.text_content().split()[0])
             #lokalizuje i klika plus/dodaj noweg maila
-            frame.get_by_role("button", name="Dodaj").click()
+            frame.get_by_role("button", name="Add").click()
             time.sleep(1)
             
         else:   
@@ -196,6 +194,7 @@ def collectAllGeneratedMails():
    
   
 def main():
+    print("[" + actualtime() +  "]" , "[ICloud] Generation started")
     #TODO deleteAllMails()
     #TODO openAccount()
     #TODO login()

@@ -58,6 +58,11 @@ def actualtime():
     current_time = c.strftime('%H:%M:%S')
     return current_time
 
+def actualdate():
+    c = datetime.now()
+    current_date = c.strftime('%d:%m:%Y')
+    return current_date
+
 def toCSV(name, lastname, mail, file):
     if not os.path.isfile(file):
         df = pd.DataFrame(columns=['NAME', 'LASTNAME', 'EMAIL'])
@@ -154,7 +159,7 @@ def generating():
                 #znalazł ilość zrobionych maili - łuskanie wymaganej wartości - przerabanie na int
                 counter = int(counter.text_content().split()[0])
                 #lokalizuje i klika plus/dodaj noweg maila
-                frame.get_by_role("button", name="Add").click()
+                frame.get_by_role("button", name="Add", exact=True).click()
                 time.sleep(1)
                 
             else:   
@@ -167,10 +172,8 @@ def generating():
             
             #lokalizuje i zapisuje do zmiennej *mail wygenerowany adres email
             mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
-            
-
-            #TODO - Zmiana na US odpowiednik
-            if "WczytywanieGeneruję" in mail:
+        
+            if "LoadingGenerating" in mail:
                 time.sleep(10)
                 mail = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/div[1]").text_content()
             
@@ -231,6 +234,10 @@ def main():
 
     match option:
         case 1:
+            # logname = "Log " + actualdate()+ " " + actualtime()+ ".txt"
+        
+            # with open(, "w") as file:
+            #     file.write("Your text goes here")
             generating()
         case 2:
             login()

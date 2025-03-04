@@ -222,16 +222,64 @@ def generating():
             browser.close()
         time.sleep(720)
 
+def deleteAllMails():
+    print("[" + actualtime() +  "]" , "[ICloud] Deleting started")
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)
+        try:
+            context = browser.new_context(storage_state="session.json", locale="us-US")
+            page = context.new_page() 
+        except:
+            print("[" + actualtime() +  "]" , "[ICloud] Session Error - Generation Aborted - [ENTER] to continue")
+            input()
+            sys.exit(1)
+            
+        page.goto("https://www.icloud.com/icloudplus/")
+        
+        page.wait_for_timeout(1000)
+        
+        page.locator("xpath=//*[@id='root']/ui-main-pane/div/div[2]/div/div/main/div/div[3]/div/div[1]/article/div/button").click()
+       
+        page.wait_for_timeout(3000)
+        
+        frame = page.frame_locator("iframe[data-name='hidemyemail']")
+        
+        counter_active = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[1]/div/div/div[1]/h2")
+        if counter_active.count() > 0:
+        
+            counter_active = int(counter_active.text_content().split()[0])
+
+            for i in range(counter_active):
+                div = frame.locator('xpath=//*[@class = "button button-bare button-expand button-rounded-rectangle"]').element_handles()[1].click()
+        
+                page.wait_for_timeout(1000)
+                # print("[" + actualtime() +  "]" , "[ICloud]", f"Deleting {div.text_content()}")
+        
+                frame.locator("xpath=//*[@id='router-nav-container']/div/div/div[4]/div/button").click()
+                page.wait_for_timeout(1000)
+                frame.get_by_text("Deactivate").element_handles()[3].click()
+                page.wait_for_timeout(3000)
+        else:    
+            counter_deactivated = frame.locator("xpath=//*[@id='router-nav-container']/div/div[2]/section[3]/div/div[1]/h2")
+            counter_deactivated = int(counter_deactivated.text_content().split()[0])
+            for _ in range(counter_deactivated):
+                div = frame.locator('xpath=//*[@class = "button button-bare button-expand button-rounded-rectangle"]').element_handles()[0].click()
+                frame.get_by_text("Delete").click()
+                pesnis = frame.get_by_text("Delete").element_handles()[3].click()
+                page.wait_for_timeout(3000)
+                
+                #do poprawy to jest jak chuj bo sypie bledami
+        
 def main():
 
     print("[1] - Generate Accounts")
     print("[2] - Create Session")
     print("[3] - Collect All Generated Emails")
     print("[4] - Open Account")
+    print("[5] - Delete All Emails")
 
 
     option = int(input("Choose Module: "))
-
     match option:
         case 1:
             # logname = "Log " + actualdate()+ " " + actualtime()+ ".txt"
@@ -245,7 +293,8 @@ def main():
             collectAllGeneratedMails()
         case 4:
             openAccount()
+        case 5:
+            deleteAllMails()
 
-    #TODO deleteAllMails()
         
 main()

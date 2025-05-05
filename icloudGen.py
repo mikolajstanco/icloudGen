@@ -267,8 +267,6 @@ def deleteAllMails():
                 frame.get_by_text("Delete").click()
                 pesnis = frame.get_by_text("Delete").element_handles()[3].click()
                 page.wait_for_timeout(3000)
-                
-                #do poprawy to jest jak chuj bo sypie bledami
         
 def main():
 
@@ -282,10 +280,6 @@ def main():
     option = int(input("Choose Module: "))
     match option:
         case 1:
-            # logname = "Log " + actualdate()+ " " + actualtime()+ ".txt"
-        
-            # with open(, "w") as file:
-            #     file.write("Your text goes here")
             generating()
         case 2:
             login()
